@@ -1,7 +1,7 @@
 // TODO: test versions
 // TODO: test clients with custom versioning schemes
 
-const peerid = require('../')
+const peerid = require('../src')
 const test = require('tape')
 
 test('basic clients from utf8 strings', t => {

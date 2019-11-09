@@ -12,8 +12,12 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "standard": "*",
-    "tape": "^4.6.0"
+    "@types/node": "^12.12.7",
+    "nodemon": "^1.19.4",
+    "prettier": "1.19.0",
+    "tape": "^4.6.0",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.7.2"
   },
   "keywords": [
     ".torrent",
@@ -30,6 +34,9 @@
     "url": "git://github.com/webtorrent/bittorrent-peerid.git"
   },
   "scripts": {
-    "test": "standard && tape test/*.js"
+    "test": "npm run compile-utils && tape test/*.js",
+    "compile-utils": "tsc ./src/lib/utils.ts",
+    "start": "tsc && node dist/index.js",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts"
   }
 }
