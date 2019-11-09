@@ -51,13 +51,9 @@ exports.isAzStyle = (peerId) => {
  * information, so we need to allow for that.
  */
 exports.isShadowStyle = (peerId) => {
-    if (peerId[5] !== "-") {
-        return false;
-    }
-    if (!isLetter(peerId[0])) {
-        return false;
-    }
-    if (!(isDigit(peerId[1]) || peerId[1] === "-")) {
+    if (peerId[5] !== "-" ||
+        !isLetter(peerId[0]) ||
+        !(isDigit(peerId[1]) || peerId[1] === "-")) {
         return false;
     }
     // Find where the version number string ends.
@@ -102,15 +98,12 @@ exports.getAzStyleVersionNumber = (peerId, version) => {
     return null;
 };
 exports.decodeBitSpiritClient = (peerId, buffer) => {
-    if (peerId.substring(2, 4) !== "BS")
+    if (peerId.substring(2, 4) !== "BS") {
         return null;
-    let version = `${buffer[1]}`;
-    if (version === "0") {
-        version = 1;
     }
     return {
         client: "BitSpirit",
-        version,
+        version: buffer[1] === 0 ? "1" : `${buffer[1]}`,
     };
 };
 exports.decodeBitCometClient = (peerId, buffer) => {
@@ -140,33 +133,28 @@ exports.decodeBitCometClient = (peerId, buffer) => {
         version: `${majVersion}.${exports.decodeNumericValueOfByte(buffer[5], minVersionLength)}`,
     };
 };
-exports.identifyAwkwardClient = buffer => {
-    let firstNonZeroIndex = 20;
-    let i;
-    for (i = 0; i < 20; ++i) {
-        if (buffer[i] > 0) {
-            firstNonZeroIndex = i;
-            break;
-        }
-    }
+exports.identifyAwkwardClient = (buffer) => {
+    let firstNonZeroIndex = buffer.findIndex(bufferItem => bufferItem > 0);
+    firstNonZeroIndex = firstNonZeroIndex > -1 ? firstNonZeroIndex : 20;
     // Shareaza check
     if (firstNonZeroIndex === 0) {
         let isShareaza = true;
-        for (i = 0; i < 16; ++i) {
+        for (let i = 0; i < 16; ++i) {
             if (buffer[i] === 0) {
                 isShareaza = false;
                 break;
             }
         }
         if (isShareaza) {
-            for (i = 16; i < 20; ++i) {
+            for (let i = 16; i < 20; ++i) {
                 if (buffer[i] !== (buffer[i % 16] ^ buffer[15 - (i % 16)])) {
                     isShareaza = false;
                     break;
                 }
             }
-            if (isShareaza)
+            if (isShareaza) {
                 return { client: "Shareaza" };
+            }
         }
     }
     if (firstNonZeroIndex === 9 &&

@@ -1,4 +1,4 @@
-const utils = require("./lib/utils");
+import * as utils from "./lib/utils";
 
 /**
  * Parses and returns the client type and version of a bittorrent peer id.
@@ -6,7 +6,7 @@ const utils = require("./lib/utils");
  *
  * @param {Buffer|string} peerId (as Buffer or hex/utf8 string)
  */
-module.exports = peerId => {
+export const peerid = peerId => {
 	let buffer;
 
 	if (Buffer.isBuffer(peerId)) {
@@ -199,7 +199,7 @@ const VER_AZ_WEBTORRENT_STYLE = v => {
 const VER_AZ_THREE_ALPHANUMERIC_DIGITS = "2.33.4";
 const VER_NONE = "NO_VERSION";
 
-function addAzStyle(id, client, version = VER_AZ_FOUR_DIGITS) {
+function addAzStyle(id: string, client, version = VER_AZ_FOUR_DIGITS) {
 	azStyleClients[id] = client;
 	azStyleClientVersions[client] = version;
 }
@@ -213,7 +213,7 @@ function addMainlineStyle(id, client) {
 	mainlineStyleClients[id] = client;
 }
 
-function addSimpleClient(client, version, id, position) {
+function addSimpleClient(client, version, id?, position?) {
 	if (typeof id === "number" || typeof id === "undefined") {
 		position = id;
 		id = version;
@@ -269,20 +269,20 @@ function getAzStyleClientVersion(client, peerId) {
 	addAzStyle("AX", "BitPump", VER_AZ_TWO_MAJ_TWO_MIN);
 	addAzStyle("AT", "Artemis");
 	addAzStyle("AZ", "Vuze", VER_AZ_FOUR_DIGITS);
-	addAzStyle("BB", "BitBuddy", "1.234");
+	addAzStyle("BB", "BitBuddy", () => "1.234");
 	addAzStyle("BC", "BitComet", VER_AZ_SKIP_FIRST_ONE_MAJ_TWO_MIN);
 	addAzStyle("BE", "BitTorrent SDK");
-	addAzStyle("BF", "BitFlu", VER_NONE);
+	addAzStyle("BF", "BitFlu", () => VER_NONE);
 	addAzStyle("BG", "BTG", VER_AZ_FOUR_DIGITS);
 	addAzStyle("bk", "BitKitten (libtorrent)");
-	addAzStyle("BR", "BitRocket", "1.2(34)");
+	addAzStyle("BR", "BitRocket", () => "1.2(34)");
 	addAzStyle("BS", "BTSlave");
 	addAzStyle("BT", "BitTorrent", VER_AZ_THREE_DIGITS_PLUS_MNEMONIC);
 	addAzStyle("BW", "BitWombat");
 	addAzStyle("BX", "BittorrentX");
 	addAzStyle("CB", "Shareaza Plus");
 	addAzStyle("CD", "Enhanced CTorrent", VER_AZ_TWO_MAJ_TWO_MIN);
-	addAzStyle("CT", "CTorrent", "1.2.34");
+	addAzStyle("CT", "CTorrent", () => "1.2.34");
 	addAzStyle("DP", "Propogate Data Client");
 	addAzStyle("DE", "Deluge", VER_AZ_DELUGE);
 	addAzStyle("EB", "EBit");
@@ -291,12 +291,12 @@ function getAzStyleClientVersion(client, peerId) {
 	addAzStyle("FG", "FlashGet", VER_AZ_SKIP_FIRST_ONE_MAJ_TWO_MIN);
 	addAzStyle("FX", "Freebox BitTorrent");
 	addAzStyle("FT", "FoxTorrent/RedSwoosh");
-	addAzStyle("GR", "GetRight", "1.2");
+	addAzStyle("GR", "GetRight", () => "1.2");
 	addAzStyle("GS", "GSTorrent"); // TODO: Format is v"abcd"
 	addAzStyle("HL", "Halite", VER_AZ_THREE_DIGITS);
 	addAzStyle("HN", "Hydranode");
 	addAzStyle("KG", "KGet");
-	addAzStyle("KT", "KTorrent", VER_AZ_KTORRENT_STYLE);
+	addAzStyle("KT", "KTorrent", () => VER_AZ_KTORRENT_STYLE);
 	addAzStyle("LC", "LeechCraft");
 	addAzStyle("LH", "LH-ABC");
 	addAzStyle("LK", "linkage", VER_AZ_THREE_DIGITS);
@@ -304,10 +304,14 @@ function getAzStyleClientVersion(client, peerId) {
 	addAzStyle(
 		"LT",
 		"libtorrent (Rasterbar)",
-		VER_AZ_THREE_ALPHANUMERIC_DIGITS,
+		() => VER_AZ_THREE_ALPHANUMERIC_DIGITS,
 	);
-	addAzStyle("lt", "libTorrent (Rakshasa)", VER_AZ_THREE_ALPHANUMERIC_DIGITS);
-	addAzStyle("LW", "LimeWire", VER_NONE); // The "0001" bytes found after the LW commonly refers to the version of the BT protocol implemented. Documented here: http://www.limewire.org/wiki/index.php?title=BitTorrentRevision
+	addAzStyle(
+		"lt",
+		"libTorrent (Rakshasa)",
+		() => VER_AZ_THREE_ALPHANUMERIC_DIGITS,
+	);
+	addAzStyle("LW", "LimeWire", () => VER_NONE); // The "0001" bytes found after the LW commonly refers to the version of the BT protocol implemented. Documented here: http://www.limewire.org/wiki/index.php?title=BitTorrentRevision
 	addAzStyle("MO", "MonoTorrent");
 	addAzStyle("MP", "MooPolice", VER_AZ_THREE_DIGITS);
 	addAzStyle("MR", "Miro");
@@ -316,7 +320,7 @@ function getAzStyleClientVersion(client, peerId) {
 	addAzStyle("NX", "Net Transport");
 	addAzStyle("OS", "OneSwarm", VER_AZ_FOUR_DIGITS);
 	addAzStyle("OT", "OmegaTorrent");
-	addAzStyle("PC", "CacheLogic", "12.3-4");
+	addAzStyle("PC", "CacheLogic", () => "12.3-4");
 	addAzStyle("PT", "Popcorn Time");
 	addAzStyle("PD", "Pando");
 	addAzStyle("PE", "PeerProject");
@@ -332,7 +336,7 @@ function getAzStyleClientVersion(client, peerId) {
 	addAzStyle("SN", "ShareNET");
 	addAzStyle("SP", "BitSpirit", VER_AZ_THREE_DIGITS); // >= 3.6
 	addAzStyle("SS", "SwarmScope");
-	addAzStyle("ST", "SymTorrent", "2.34");
+	addAzStyle("ST", "SymTorrent", () => "2.34");
 	addAzStyle("st", "SharkTorrent");
 	addAzStyle("SZ", "Shareaza");
 	addAzStyle("TG", "Torrent GO");
@@ -357,8 +361,8 @@ function getAzStyleClientVersion(client, peerId) {
 	addAzStyle("XL", "\u8FC5\u96F7\u5728\u7EBF (Xunlei)"); // Apparently, the English name of the client is "Thunderbolt".
 	addAzStyle("XT", "XanTorrent");
 	addAzStyle("XF", "Xfplay", VER_AZ_TRANSMISSION_STYLE);
-	addAzStyle("XX", "XTorrent", "1.2.34");
-	addAzStyle("XC", "XTorrent", "1.2.34");
+	addAzStyle("XX", "XTorrent", () => "1.2.34");
+	addAzStyle("XC", "XTorrent", () => "1.2.34");
 	addAzStyle("ZT", "ZipTorrent");
 	addAzStyle("7T", "aTorrent");
 	addAzStyle("ZO", "Zona", VER_AZ_FOUR_DIGITS);
